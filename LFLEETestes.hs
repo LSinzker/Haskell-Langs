@@ -4,7 +4,6 @@ import LFLE01E
 
 import Test.HUnit
 
-inc :: DecFuncao
 inc = DecFuncao "inc" "x" (Soma (Ref "x")(Valor 1))
 add = DecFuncao "add" "x" (Soma (Ref "x")(Ref "y"))
 sub = DecFuncao "sub" "x" (Subtracao (Ref "x")(Ref "y"))
