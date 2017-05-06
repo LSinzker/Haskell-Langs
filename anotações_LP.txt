@@ -1,0 +1,67 @@
+module Testes where
+-- Em linguagens com suporte a escopo
+-- dinamico, esse exemplo deveria funcionar
+-- e a avaliacao da expressao "e" deveria
+-- retornar o valor 15.
+--
+-- Em linguagens com escopo estatico, esse
+-- exemplo seria rejeitado
+
+f x = x + y
+-------------------------------------------------------------------------------------------------------
+Inc x = x+1
+
+Let x=5                |Let x=5
+  in Inc 3             |  in 3+1
+    |  └┤Retornar 4 é mais natural
+    └┤Retornar 6 é pouco natural
+
+F x = x+y
+
+Let y=4
+  in F 4
+   | └┤Valor 7 em scopo dinâmico
+   └┤Erro escopo estático
+
+        (subId val)
+substituicao x 5 (F 3)
+                                                                  ╗
+      (I) Recuperar a DecFuncao                                   ║
+          => Usando a nossa Funcao "Pesquisar"                    ║
+      (II) Se subId == arg da funcao (mesmo nome)                 ║
+              => Não substitui no corpo da funcao                 ╠▬▬▬▬>Escopo Dinâmico
+              => Retorna a expressao de Aplicacao                 ║
+          else                                                    ║
+                substituicao arg f arg (subs subId val corpo)     ║
+                                                                  ╝
+-------------------------------------------------------------------------------------------------------------------------
+                                                    Aula 11/04
+-------------------------------------------------------------------------------------------------------------------------
+
+Let x=5                                   |        |Let|
+  in Let y=10                             |       / \    \
+    in Let z = 15                         |     |x| |5|   \
+      in x+y+z                            |               |Let|
+                                          |              / \    \
+                                          |            |y| |10|  \
+                                          |                       |Let|
+                                          |                       / \   \
+                                          |                     |z| |15| \
+                                          |                              |+|
+                                          |                              / \
+                                          |                            |5| |+|
+                                          |                                / \
+                                          |                             |10| |15|
+-------------------------------------------------------------------------------------------------------------------------
+                                                  Aula 18/04
+-------------------------------------------------------------------------------------------------------------------------
+
+avaliar Let x = 10
+            in (Let x = 5 in x + 8) + x
+
+avlaiar (Let x=5 in x+8) + x [] [(x,10)]
+
+=Lhs + Rhs [] [(x,10)]
+  where
+    I Lhs = avaliar (Ley x=5 in x+8) [] [(x,10)] = 13
+   II Rhs = avaliar x [] [(x,10)] = 10

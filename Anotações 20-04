@@ -1,0 +1,91 @@
+Linguagens:
+
+LLE => Let + expressões + substituição
+
+LFLE01 => Funções + Let + substituição
+
+LFLE02 => Funções + Let + expressões + referência
+
+LFCF: Funções com valor
+  Expressões = Valor Int
+             |Soma Exp Exp
+             |...
+             |Let Id Exp Exp
+             |\ Id Exp
+             |Aplicacao Exp Exp
+
+\x -> x+1
+
+avaliar :: Expressao -> Expressao
+         .               /    \
+         .              /      \
+         .    {Valor Int}   {\expression}
+         .
+         .
+avaliar (Valor m) = Valor m
+avaliar (Soma e d) = Valor(ve + vd)
+  where
+    (Valor ve) = avaliar e
+    (Valor vd) = avaliar d
+         .
+         .
+         .
+avaliar(Let v e c) = avaliar(substituicao v e c)
+         .
+         .
+         .
+avaliar(\ Id Exp) = \ Id Exp
+         .
+         .
+         .
+avaliar(Aplicacao e1 e2) =
+    Let Lambda = avaliar e1
+      in case Lambda of
+      (\ v e) = avaliar (substituicao v e2 c)
+      otherwise = ERROR
+                                  | Let "F" (\ "x" (Soma (Ref "x") (Valor 1)))
+                                  |avaliar (Aplicacao (Ref "F")(Valor 4))
+
+--------------------------------------------------------------------------------
+Def Soma x = x+y
+
+  Let y=3       |(a)Escolpo Estático: Erro
+    in Soma 4   |(b)Escolpo Dinâmiico: Valor 7
+
+  Let y=3                     |
+    in Let Soma = \x -> x+y   |(a)Escolpo Estático: 7
+      in Soma 4               |
+
+  Let y=3                     |
+    in Let F = \y -> x+y      |(a)Escolpo Estático: 6 => (x é substituido por 3)
+      in Let X=4              |(b)Escolpo Dinâmico: 7 => (x é substituido por 4)
+        in F 3                |
+
+--------------------------------------------------------------------------------
+
+Lazy Evaluation
+Baseado nas notas de aula do Prof. Dr. Graham Hutton
+
+(Ler cap. 7 do livro)
+--------------------------------------------------------------------------------
+zeros = 0:zeros
+
+timeBonus :: [String] -> [(String, Int)]
+timeBonus c = zip c bs
+  where bs = [20,12,8] ++ zeros
+
+tB2 :: [String] -> [(String, Int)]
+--------------------------------------------------------------------------------
+sqr m = m*m
+
+sqr (3+4) | Innermost |  Outermost  |    Lazy     |
+              sqr 7   | (3+4)*(3+4) | (3+4)*(3+4)
+               7*7    |   7*(3+4)   |     7*7
+               49     |     7*7     |     49
+                      |      49     |
+
+Outermost é geralmente menos eficiente, porem permite que trabalhemos
+com listas infinitas, de forma em que operações possam terminar.
+
+From Innermost to Outermost
+Type Refs = [(Id, Int)] =====> [(Id, Exp)]
