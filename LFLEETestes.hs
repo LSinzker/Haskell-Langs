@@ -4,25 +4,27 @@ import LFLE01E
 
 import Test.HUnit
 
+amb = [inc, add, sub, divi]
+
 inc = DecFuncao "inc" "x" (Soma (Ref "x")(Valor 1))
 add = DecFuncao "add" "x" (Soma (Ref "x")(Ref "y"))
 sub = DecFuncao "sub" "x" (Subtracao (Ref "x")(Ref "y"))
-divi = DecFuncao "divi" "x" (Divisao (Ref "x")(Ref "y"))
-
-amb1 = [inc]
-amb2 = [add]
-amb3 = [sub]
-amb4 = [divi]
+divi = DecFuncao "divi" "x" (Divisao (Ref "y")(Ref "x"))
 
 --apInc = Aplicacao "inc" (Ref "x")
-apInc = Aplicacao "inc" (Valor 3)
+apInc = Aplicacao "inc" (Valor 2)
 apAdd = Aplicacao "add" (Valor 4)
 apSub = Aplicacao "sub" (Valor 2)
 apDiv = Aplicacao "divi" (Valor 2)
 
+let00 = Let "x" (Valor 3)(Let "y" (Valor 4) apAdd)
+--avaliar (Let "x" (Valor 3)(Let "y" (Valor 4) apAdd))
+--avaliar (substituicao "x" 3 (Let "y" (Valor 4) apAdd))
+--avaliar (Let "y" (Valor 4) (substituicao "x" 3 (Aplicacao "add" (Valor 4))))
+--                            
 --let x = 3 in let inc x = x+1 in inc x
 let01 = Let "x" (Valor 3)(apInc)
---      Let "x" (Valor 3)(Aplicacao "inc" (Ref "x"))
+--      Let "x" (Valor 3)(Aplicacao "inc" (Valor 2))
 
 --let01 = Let "y" (Valor 3)(Let "x"(Valor 4)(Soma(Ref "x")(Ref "y")))
 --let y = 3 in let add x = x + y in add 4
