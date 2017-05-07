@@ -34,7 +34,7 @@ avaliar (Let subId expNomeada corpoExp) amb
   |corpoExp /= (Aplicacao n e) = avaliar (substituicao subId (avaliar expNomeada amb) corpoExp) amb
   |otherwise = avaliar (substAplica subId (avaliar expNomeada amb) corpoExp amb) amb
   where
-    Aplicacao n e = pesqArg2 corpoExp
+    Aplicacao n e = corpoExp
 
 avaliar (Ref var) _ = error "avaliando uma variavel livre."
 
@@ -58,12 +58,6 @@ substituicao subId val (Ref var)
  | otherwise = (Ref var)
 
 substituicao subId val (Aplicacao nome exp) = Aplicacao nome exp
-
-pesqArg :: Expressao -> Expressao
-pesqArg (Soma ve vd) = ExpExp ve vd
-pesqArg (Subtracao ve vd) = ExpExp ve vd
-pesqArg (Multiplicacao ve vd) = ExpExp ve vd
-pesqArg (Divisao ve vd) = ExpExp ve vd
 
 pesqArg2 (Aplicacao vn ve) = Aplicacao vn ve
 

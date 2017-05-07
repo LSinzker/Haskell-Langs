@@ -14,6 +14,9 @@ divi = DecFuncao "divi" "x" (Divisao (Ref "x")(Ref "y"))
 apInc = Aplicacao "inc" (Valor 2)
 apAdd = Aplicacao "add" (Valor 3)
 
+
+let00 = Let "x" (Valor 3)(Let "y" (Valor 4) apAdd)
+
 let01 = Let "x" (Valor 4)(apInc)
 --avaliar (Let "x" (Valor 4)(Aplicacao "inc" (Valor 2))) amb
 --avaliar (pesquisarArgumento "x" 4 (Aplicacap "inc" (Valor 2)) amb) amb
@@ -25,4 +28,5 @@ let02 = Let "y" (Valor 3)(Let "x" (Valor 4) (Aplicacao "add" (Valor 3)))
 --      Let "y" (Valor 3)(Aplicacao "add" (Valor 4))
 
 --avaliar (Let "y" (Valor 3)(Let "x" (Valor 4) (Aplicacao "add" (Valor 3))))
---avaliar (pesquisarArgumento "y" 3 (Let "x" (Valor 4) (Aplicacao "add" (Valor 3))))
+--avaliar (pesquisarArgumento "add" "y" 3 (Let "x" (Valor 4) (Aplicacao "add" (Valor 3))))
+--avaliar (Let "y" (Valor 3) )

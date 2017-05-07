@@ -44,7 +44,6 @@ avaliar (Let subId expNomeada corpoExp) amb
       subIds = [subId] ++ args -- merge (["z"] ["y", "z"]) = ["z","y","x"]
       vals = [expNomeada] ++ e -- merge ([Valor 4], [(Valor 3), (Valor 2)]) = [(Valor 4), (Valor 3), (Valor 2)]
 
-
 avaliar (Ref var) _ = error "avaliando uma variavel livre."
 
 pesquisarFuncao :: Nome -> Ambiente -> DecFuncao
