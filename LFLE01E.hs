@@ -30,11 +30,12 @@ avaliar (Aplicacao nome exp) amb =
   let (DecFuncao n arg corpo) = pesquisarFuncao nome amb
   in avaliar (substAplica arg (avaliar exp amb) corpo amb) amb
 
-avaliar (Let subId expNomeada corpoExp) amb
-  |corpoExp /= (Aplicacao n e) = avaliar (substituicao subId (avaliar expNomeada amb) corpoExp) amb
-  |otherwise = avaliar (substAplica subId (avaliar expNomeada amb) corpoExp amb) amb
-  where
-    Aplicacao n e = corpoExp
+avaliar (Let subId expNomeada corpoExp) amb =
+   avaliar (substAplica subId (avaliar expNomeada amb) corpoExp amb) amb
+--  |corpoExp /= (Aplicacao n e) = avaliar (substituicao subId (avaliar expNomeada amb) corpoExp) amb
+--  |otherwise = avaliar (substAplica subId (avaliar expNomeada amb) corpoExp amb) amb
+--  where
+--    Aplicacao n e = corpoExp
 
 avaliar (Ref var) _ = error "avaliando uma variavel livre."
 
@@ -62,6 +63,22 @@ substituicao subId val (Aplicacao nome exp) = Aplicacao nome exp
 pesqArg2 (Aplicacao vn ve) = Aplicacao vn ve
 
 substAplica :: Id -> Int -> Expressao -> Ambiente -> Expressao
-substAplica subId val (Aplicacao nome exp) amb = Let subId (Valor val)(Let arg exp corpo)
-  where
-    DecFuncao n arg corpo = pesquisarFuncao nome amb
+substAplica subId val (Valor n) amb = Valor n
+substAplica subId val (Soma e d) amb = Soma (substituicao subId val e)(substituicao subId val d)
+substAplica subId val (Subtracao e d) amb = Subtracao (substituicao subId val e)(substituicao subId val d)
+substAplica subId val (Multiplicacao e d) amb = Multiplicacao (substituicao subId val e)(substituicao subId val d)
+substAplica subId val (Divisao e d) amb = Divisao (substituicao subId val e)(substituicao subId val d)
+substAplica subId val (Let boundId namedExp bodyExp) amb
+  | subId == boundId  = (Let boundId namedExp bodyExp)
+  | otherwise = Let boundId namedExp (substAplica subId val bodyExp amb)
+substAplica subId val (Ref var) amb
+  | subId == var = (Valor val)
+  | otherwise = (Ref var)
+
+substAplica subId val (Let boundId namedExp bodyExp) amb
+  | subId == boundId = (Let boundId namedExp bodyExp)
+  | otherwise = Let boundId namedExp (substAplica subId val bodyExp amb)
+
+substAplica subId val (Aplicacao nome exp) amb =
+  let (DecFuncao n arg corpo) = pesquisarFuncao nome amb
+  in Let subId (Valor val)(Let arg exp (corpo))

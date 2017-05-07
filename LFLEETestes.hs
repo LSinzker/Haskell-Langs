@@ -13,15 +13,12 @@ divi = DecFuncao "divi" "x" (Divisao (Ref "y")(Ref "x"))
 
 --apInc = Aplicacao "inc" (Ref "x")
 apInc = Aplicacao "inc" (Valor 2)
-apAdd = Aplicacao "add" (Valor 4)
+apAdd = Aplicacao "add" (Valor 3)
 apSub = Aplicacao "sub" (Valor 2)
 apDiv = Aplicacao "divi" (Valor 2)
 
-let00 = Let "x" (Valor 3)(Let "y" (Valor 4) apAdd)
---avaliar (Let "x" (Valor 3)(Let "y" (Valor 4) apAdd))
---avaliar (substituicao "x" 3 (Let "y" (Valor 4) apAdd))
---avaliar (Let "y" (Valor 4) (substituicao "x" 3 (Aplicacao "add" (Valor 4))))
---                            
+let00 = Let "x" (Valor 4)(Let "y" (Valor 3) apAdd)
+--
 --let x = 3 in let inc x = x+1 in inc x
 let01 = Let "x" (Valor 3)(apInc)
 --      Let "x" (Valor 3)(Aplicacao "inc" (Valor 2))
@@ -36,3 +33,11 @@ let03 = Let "y" (Valor 8)(apSub)
 --    let y=8 in let sub x = x-y in sub 2
 
 let04 = Let "y" (Valor 10)(apDiv)
+
+
+let11 = Let "y" (Valor 3)(Let "x" (Valor 4) apAdd)
+--          subId   val     -------------------corpoExp----------------
+--                         boundId  namedExp  -----------bodyExp----------
+--avaliar (Let "y" (Valor 3)(Let "x"(Valor 4) (Aplicacao "add" (Valor 3))) amb
+--avaliar (substAplica "y" 3 (Let "x"(Valor 4)(Aplicacao "add" (valor 3))) amb
+--avaliar (Let "x" (Valor 4)(subs))
