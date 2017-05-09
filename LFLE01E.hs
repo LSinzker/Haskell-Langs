@@ -16,6 +16,7 @@ data Expressao = Valor Int
                | Let Id Expressao Expressao
                | Ref Id
                | Aplicacao Nome Expressao
+               | ExpExp Expressao Expressao
  deriving(Show, Eq)
 
 avaliar :: Expressao -> Ambiente -> Int
@@ -51,14 +52,15 @@ substituicao subId val (Subtracao e d) = Subtracao (substituicao subId val e)(su
 substituicao subId val (Multiplicacao e d) = Multiplicacao (substituicao subId val e)(substituicao subId val d)
 substituicao subId val (Divisao e d) = Divisao (substituicao subId val e)(substituicao subId val d)
 substituicao subId val (Let boundId namedExp bodyExp)
-   | subId == boundId  = (Let boundId namedExp bodyExp)
-   | otherwise = Let boundId namedExp (substituicao subId val bodyExp)
-
+ | subId == boundId  = (Let boundId namedExp bodyExp)
+ | otherwise = Let boundId namedExp (substituicao subId val bodyExp)
 substituicao subId val (Ref var)
-  | subId == var = (Valor val)
-  | otherwise = (Ref var)
+ | subId == var = (Valor val)
+ | otherwise = (Ref var)
 
 substituicao subId val (Aplicacao nome exp) = Aplicacao nome exp
+
+pesqArg2 (Aplicacao vn ve) = Aplicacao vn ve
 
 substAplica :: Id -> Int -> Expressao -> Ambiente -> Expressao
 substAplica subId val (Valor n) amb = Valor n
@@ -66,21 +68,17 @@ substAplica subId val (Soma e d) amb = Soma (substituicao subId val e)(substitui
 substAplica subId val (Subtracao e d) amb = Subtracao (substituicao subId val e)(substituicao subId val d)
 substAplica subId val (Multiplicacao e d) amb = Multiplicacao (substituicao subId val e)(substituicao subId val d)
 substAplica subId val (Divisao e d) amb = Divisao (substituicao subId val e)(substituicao subId val d)
-substAplica subId val (Let boundId namedExp bodyExp) amb =
-  substRef subId val (Let boundId namedExp bodyExp) amb
-
+substAplica subId val (Let boundId namedExp bodyExp) amb
+  | subId == boundId  = (Let boundId namedExp bodyExp)
+  | otherwise = Let boundId namedExp (substAplica subId val bodyExp amb)
 substAplica subId val (Ref var) amb
   | subId == var = (Valor val)
   | otherwise = (Ref var)
 
+substAplica subId val (Let boundId namedExp bodyExp) amb
+  | subId == boundId = (Let boundId namedExp bodyExp)
+  | otherwise = Let boundId namedExp (substAplica subId val bodyExp amb)
+
 substAplica subId val (Aplicacao nome exp) amb =
   let (DecFuncao n arg corpo) = pesquisarFuncao nome amb
   in Let subId (Valor val)(Let arg exp (corpo))
-
-substRef :: Id -> Int -> Expressao -> Ambiente -> Expressao
-substRef subId val (Let boundId namedExp bodyExp) amb
-  | namedExp == (Ref subId) = Let boundId (Valor val) bodyExp
-  | otherwise = Let boundId namedExp (substAplica subId val bodyExp amb)
-
-
---  Let boundId namedExp (substAplica subId val bodyExp amb)
