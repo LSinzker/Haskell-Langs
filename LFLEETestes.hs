@@ -34,6 +34,13 @@ let03 = Let "y" (Valor 8)(apSub)
 
 let04 = Let "y" (Valor 10)(apDiv)
 
+let05 = Let "x" (Valor 5)(Let "y" (Ref "x")(Ref "y"))
+
+let06 = Let "x" (Valor 5)
+        (Let "x" (Ref "x") (Ref "x"))
+
+let07 = Let "x" (Valor 5)
+                (Soma (Ref "x") (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3))))
 
 let11 = Let "y" (Valor 3)(Let "x" (Valor 4) apAdd)
 --          subId   val     -------------------corpoExp----------------
