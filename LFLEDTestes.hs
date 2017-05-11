@@ -22,3 +22,6 @@ let01 = Let "x" (Valor 4)(apInc)
 let02 = Let "y" (Valor 3)(Let "x" (Valor 4) (Aplicacao "add" (Valor 3)))
 
 let03 = Let "x" (Valor 4)(Let "y" (Valor 3) (Aplicacao "add" (Valor 3)))
+
+--let08 = let x=10 in let x=x+5 in x+2
+let04 = Let "x" (Valor 10) (Let "x" (Soma (Ref "x")(Valor 5)) (Soma(Ref "x")(Valor 2)))

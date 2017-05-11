@@ -47,6 +47,7 @@ avaliar (Aplicacao nome exp) amb ref = avaliar corpo amb ref'
    (DecFuncao n arg corpo) = pesquisarFuncao nome amb
    valor = avaliar exp amb ref
    ref'  = (arg, valor):ref
+
 avaliar (Let subId expNomeada corpoExp) amb ref = avaliar corpoExp amb ref'
   where
     valor = avaliar expNomeada amb ref

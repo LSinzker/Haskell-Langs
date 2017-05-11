@@ -30,14 +30,14 @@ avaliar (Subtracao e d) amb = avaliar e amb - avaliar d amb
 avaliar (Multiplicacao e d) amb = avaliar e amb * avaliar d amb
 avaliar (Divisao e d) amb = avaliar e amb `div` avaliar d amb
 
-avaliar (Aplicacao nome exp) amb
-  | length arg == length exp = avaliar (substAplica arg exp corpo) amb
+avaliar (Aplicacao nome exp) amb =
+  avaliar(lets arg exp corpo) amb
     where
       (DecFuncao n arg corpo) = pesquisarFuncao nome amb
 
 avaliar (Let subId expNomeada corpoExp) amb
   |corpoExp /= (Aplicacao n e) = avaliar (substituicao subId (avaliar expNomeada amb) corpoExp) amb
-  |otherwise = avaliar (substAplica subIds vals corpo) amb
+  |otherwise = avaliar (lets subIds vals corpo) amb
     where
       Aplicacao nome e = corpoExp
       DecFuncao n args corpo = pesquisarFuncao nome amb
@@ -64,10 +64,6 @@ substituicao subId val (Let boundId namedExp bodyExp)
 substituicao subId val (Ref var)
  | subId == var = (Valor val)
  | otherwise = (Ref var)
-
---       ["z","y","x"]
-substAplica :: [Id] -> [Expressao] -> Expressao -> Expressao
-substAplica subIds vals corpo = lets subIds vals corpo
 
 --subIds = ["z","y","x"]
 --vals = [(Valor 4), (Valor 3), (Valor 2)]
