@@ -29,27 +29,10 @@ toInt (Valor n) = n
 
 avaliar :: Expressao -> Expressao
 avaliar (Valor n) = (Valor n)
-
-avaliar (Soma e d) = Valor (ve + vd)
- where
-  (Valor ve) = avaliar e
-  (Valor vd) = avaliar d
-
-avaliar (Subtracao e d) = Valor (ve - vd)
-  where
-   (Valor ve) = avaliar e
-   (Valor vd) = avaliar d
-
-avaliar (Multiplicacao e d) = Valor (ve * vd)
-  where
-   (Valor ve) = avaliar e
-   (Valor vd) = avaliar d
-
-avaliar (Divisao e d) = Valor (ve `div` vd)
-  where
-   (Valor ve) = avaliar e
-   (Valor vd) = avaliar d
-
+avaliar (Soma e d) = avaliarExpBin e d (+)
+avaliar (Subtracao e d) = avaliarExpBin e d (-)
+avaliar (Multiplicacao e d) = avaliarExpBin e d (*)
+avaliar (Divisao e d) = avaliarExpBin e d div
 avaliar (Lambda argFormal corpo) = (Lambda argFormal corpo)
 
 avaliar (App exp1 exp2) =
@@ -59,8 +42,6 @@ avaliar (App exp1 exp2) =
      otherwise -> error "aplicando uma expressao que nao eh lambda"
 
 avaliar (Let subId expNomeada corpoExp) = avaliar (App exp1 exp2)
---  | corpoExp /= Let boundId namedExp bodyExp = substituicao subId expNomeada corpoExp
---  | otherwise = avaliar (App exp1 exp2)
     where
       Let boundId namedExp bodyExp = corpoExp
       exp1 = Lambda subId corpoExp
@@ -70,32 +51,13 @@ avaliar (Ref var) = error "avaliando uma variavel livre."
 
 substituicao :: Id -> Expressao -> Expressao -> Expressao
 substituicao subId val (Valor n) = Valor n
-substituicao subId val (Soma e d)
-  | d == Let boundId namedExp bodyExp = Soma (substituicao subId val e)(avaliar d)
-  | otherwise = Soma (substituicao subId val e)(substituicao subId val d)
-  where
-    Let boundId namedExp bodyExp = d
-
-substituicao subId val (Subtracao e d)
-  | d == Let boundId namedExp bodyExp = Subtracao (substituicao subId val e)(avaliar d)
-  | otherwise = Subtracao (substituicao subId val e)(substituicao subId val d)
-  where
-    Let boundId namedExp bodyExp = d
-
-substituicao subId val (Multiplicacao e d)
-  | d == Let boundId namedExp bodyExp = Multiplicacao (substituicao subId val e)(avaliar d)
-  | otherwise = Multiplicacao (substituicao subId val e)(substituicao subId val d)
-  where
-    Let boundId namedExp bodyExp = d
-
-substituicao subId val (Divisao e d)
-  | d == Let boundId namedExp bodyExp = Divisao (substituicao subId val e)(avaliar d)
-  | otherwise = Divisao (substituicao subId val e)(substituicao subId val d)
-  where
-    Let boundId namedExp bodyExp = d
-
-substituicao subId val (Let boundId namedExp bodyExp) =
-  substRef subId val (Let boundId namedExp bodyExp)
+substituicao subId val (Soma e d) = Soma (substituicao subId val e)(substituicao subId val d)
+substituicao subId val (Subtracao e d) = Subtracao (substituicao subId val e)(substituicao subId val d)
+substituicao subId val (Multiplicacao e d) = Multiplicacao (substituicao subId val e)(substituicao subId val d)
+substituicao subId val (Divisao e d) = Divisao (substituicao subId val e)(substituicao subId val d)
+substituicao subId val (Let boundId expNomeada corpo)
+  | boundId == subId = (Let boundId (substituicao subId val expNomeada) corpo)
+  | otherwise = (Let boundId (substituicao subId val expNomeada) (substituicao subId val corpo))
 
 substituicao subId val (Ref var)
   | subId == var =  val
@@ -105,3 +67,9 @@ substRef :: Id -> Expressao -> Expressao -> Expressao
 substRef subId val (Let boundId namedExp bodyExp)
   | namedExp == (Ref subId) = Let boundId val bodyExp
   | otherwise = Let boundId namedExp (substituicao subId val bodyExp)
+
+avaliarExpBin :: Expressao -> Expressao -> (Int -> Int -> Int) -> Expressao
+avaliarExpBin e d op = Valor (op ve vd)
+ where
+  (Valor ve) = avaliar e
+  (Valor vd) = avaliar d

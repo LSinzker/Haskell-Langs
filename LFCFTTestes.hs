@@ -24,13 +24,6 @@ let02 = Let "x" (Valor 5)
 let03 = Let "x" (Valor 5)
          (Soma (Ref "x") (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3))))
 
---avaliar ( Let "x" (Valor 5) (Soma (Ref "x") (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3)))) )
---avaliar ( App (Lambda "x" (Soma (Ref "x") (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3))))) (Valor 5))
-                                           ----e----  ---------------------d----------------------
---avaliar ( substituicao "x" (Valor 5) (Soma (Ref "x") (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3) ) ) ) )
---avaliar ( Soma (substituicao "x" (Valor 5) (Ref "x") (substituicao "x" (Valor 5) (Let "x" (Valor 10) (Soma (Ref "x") (Valor 3))))))
---avaliar ( Soma (Valor 5) )
-
 -- let x = 5 in let y = x in y
 let04 = Let "x" (Valor 5)
         (Let "y" (Ref "x") (Ref "y"))
